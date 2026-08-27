@@ -325,9 +325,31 @@
   .scroll-line::after{ content:""; position:absolute; top:-44px; left:0; width:100%; height:44px; background:linear-gradient(var(--gold-bright), transparent); animation:scrollcue 2.2s ease-in-out infinite; }
   @keyframes scrollcue{ to{ top:44px; } }
 
+  /* ================= MARQUEE (running strip) ================= */
+  .marquee{
+    position:relative; overflow:hidden;
+    border-top:1px solid var(--line-dark); border-bottom:1px solid var(--line-dark);
+    background:var(--ink-2);
+    padding:22px 0;
+  }
+  .marquee-track{ display:flex; width:max-content; animation:marqueeScroll 34s linear infinite; }
+  .marquee:hover .marquee-track{ animation-play-state:paused; }
+  .marquee-item{
+    display:flex; align-items:center; gap:18px; flex:none;
+    font-family:var(--font-display); font-size:clamp(1.05rem,2.1vw,1.5rem);
+    color:var(--on-dark-mute); white-space:nowrap; padding:0 22px;
+  }
+  .marquee-item strong{ color:var(--gold-bright); font-weight:500; }
+  .marquee-item .dot{ color:var(--gold-dim); font-size:.8em; }
+  @keyframes marqueeScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
   /* ================= ABOUT ================= */
   .about-section{ position:relative; overflow:hidden; color:var(--on-dark); }
-  .about-bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+  .about-bg{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
+    animation:aboutDrift 24s ease-in-out infinite alternate;
+  }
+  @keyframes aboutDrift{ from{ transform:scale(1); } to{ transform:scale(1.07); } }
   .about-section::before{
     content:""; position:absolute; inset:0; z-index:1;
     background:linear-gradient(105deg, rgba(11,22,19,.95) 0%, rgba(11,22,19,.86) 42%, rgba(11,22,19,.5) 100%);
@@ -413,11 +435,51 @@
   .modal-strip > div{ overflow:hidden; aspect-ratio:1; }
   .modal-strip img{ width:100%; height:100%; object-fit:cover; display:block; }
 
+  /* ================= WALKTHROUGH (scroll-through-the-home) ================= */
+  .walk-section{ padding:0; background:var(--ink); }
+  .walk-head{ padding:clamp(72px,10vw,120px) 0 56px; text-align:center; }
+  .walk-head .eyebrow{ justify-content:center; }
+  .walk-head h2{ font-size:clamp(2rem,4.4vw,3.2rem); margin:18px 0 14px; }
+  .walk-head p{ max-width:52ch; margin:0 auto; color:var(--on-dark-mute); font-size:1rem; }
+
+  .walk-pin{ position:relative; height:calc(var(--walk-rooms,5) * 100svh); }
+  .walk-stage-outer{ position:sticky; top:0; height:100svh; overflow:hidden; background:var(--ink); }
+  .walk-stage{ position:absolute; inset:0; }
+  .walk-room-frame{ position:absolute; inset:0; opacity:0; will-change:transform,opacity; }
+  .walk-room-frame img{ width:100%; height:100%; object-fit:cover; display:block; transform-origin:center 42%; }
+  .walk-room-frame::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(11,22,19,.6) 0%, rgba(11,22,19,.08) 26%, rgba(11,22,19,.08) 66%, rgba(11,22,19,.82) 100%);
+  }
+  .walk-vignette{ position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 12vw 2vw rgba(0,0,0,.55); z-index:3; }
+  .walk-caption{ position:absolute; left:clamp(20px,5vw,56px); bottom:clamp(74px,11vw,116px); z-index:4; display:flex; flex-direction:column; gap:6px; }
+  .walk-index{ font-size:.68rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold-bright); }
+  .walk-room{ font-family:var(--font-display); font-size:clamp(1.8rem,4vw,3rem); color:var(--on-dark); }
+  .walk-progress{ position:absolute; left:clamp(20px,5vw,56px); bottom:clamp(44px,7vw,68px); width:min(240px,38vw); height:1px; background:rgba(246,191,95,.22); z-index:4; }
+  .walk-progress-bar{ height:100%; width:0%; background:var(--gold-bright); }
+  .walk-scrollhint{
+    position:absolute; right:clamp(20px,5vw,56px); bottom:clamp(44px,7vw,68px); z-index:4;
+    font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--on-dark-mute);
+    display:flex; align-items:center; gap:10px; transition:opacity .4s ease;
+  }
+  .walk-scrollhint::after{ content:""; width:34px; height:1px; background:var(--on-dark-mute); }
+  .walk-pin.is-done .walk-scrollhint{ opacity:0; }
+  @media (max-width:640px){ .walk-room{ font-size:1.55rem; } .walk-scrollhint{ display:none; } }
+
   /* ================= DESIGN COLLECTION ================= */
   .style-row{ display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line-dark); }
   .style-card{ background:var(--ink); position:relative; aspect-ratio:3/4.3; overflow:hidden; }
-  .style-card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.16,.8,.28,1); }
-  .style-card:hover img{ transform:scale(1.08); }
+  .style-card img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    transition:transform .8s cubic-bezier(.16,.8,.28,1);
+    animation:styleDrift 19s ease-in-out infinite alternate;
+  }
+  .style-card:nth-child(2) img{ animation-delay:-4s; }
+  .style-card:nth-child(3) img{ animation-delay:-8s; }
+  .style-card:nth-child(4) img{ animation-delay:-12s; }
+  .style-card:nth-child(5) img{ animation-delay:-16s; }
+  @keyframes styleDrift{ from{ transform:scale(1); } to{ transform:scale(1.08); } }
+  .style-card:hover img{ animation-play-state:paused; }
   .style-card-copy{ position:absolute; left:0; right:0; bottom:0; padding:22px 20px; z-index:2; }
   .style-card-copy::before{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent, rgba(10,8,6,.75)); z-index:-1; }
   .style-card h4{ color:#fff; font-size:1.15rem; margin-bottom:6px; }
@@ -561,6 +623,7 @@
   </a>
   <nav class="primary-links">
     <a href="#top">Home</a>
+    <a href="#walkthrough">Walkthrough</a>
     <a href="#about">About</a>
     <a href="#services">Services</a>
     <a href="#work">Projects</a>
@@ -577,6 +640,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="#top">Home</a>
+  <a href="#walkthrough">Walkthrough</a>
   <a href="#about">About</a>
   <a href="#services">Services</a>
   <a href="#work">Projects</a>
@@ -607,6 +671,38 @@
     <div class="scroll-line"></div>
   </div>
 </section>
+
+<!-- ============ WALKTHROUGH — cinematic scroll-through-the-home ============ -->
+<!-- REPLACE: swap the room sequence below with a real project walkthrough once the client supplies -->
+<!-- room-by-room photography of a finished space (foyer → living room → kitchen → bedroom → study/office). -->
+<!-- Currently reuses the studio's own project photography already embedded in this page — no stand-ins. -->
+<section class="section walk-section" id="walkthrough" aria-label="Scroll-through tour of a Sri Sankalp interior">
+  <div class="wrap walk-head reveal">
+    <div class="eyebrow">Step Inside</div>
+    <h2>Walk Through The Space</h2>
+    <p>Scroll to move from room to room — the way a finished Sri Sankalp interior actually feels to walk through.</p>
+  </div>
+  <div class="walk-pin" id="walkPin">
+    <div class="walk-stage-outer">
+      <div class="walk-stage" id="walkStage"></div>
+      <div class="walk-vignette"></div>
+      <div class="walk-caption">
+        <span class="walk-index" id="walkIndex">01 / 05</span>
+        <span class="walk-room" id="walkRoom">The Foyer</span>
+      </div>
+      <div class="walk-progress"><div class="walk-progress-bar" id="walkProgressBar"></div></div>
+      <div class="walk-scrollhint">Scroll to continue</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE (running strip) ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item"><strong>Residential Interiors</strong><span class="dot">•</span>Modular Kitchens<span class="dot">•</span>Bedroom Interiors<span class="dot">•</span>Living Spaces<span class="dot">•</span>Commercial Interiors<span class="dot">•</span>Custom Interior Solutions<span class="dot">•</span>Vijayawada, Andhra Pradesh<span class="dot">•</span></span>
+    <span class="marquee-item"><strong>Residential Interiors</strong><span class="dot">•</span>Modular Kitchens<span class="dot">•</span>Bedroom Interiors<span class="dot">•</span>Living Spaces<span class="dot">•</span>Commercial Interiors<span class="dot">•</span>Custom Interior Solutions<span class="dot">•</span>Vijayawada, Andhra Pradesh<span class="dot">•</span></span>
+  </div>
+</div>
 
 <!-- ============ ABOUT / BRAND STORY ============ -->
 <section class="section about-section" id="about">
@@ -1026,6 +1122,73 @@
   baWrap.addEventListener('touchstart', start, {passive:true});
   window.addEventListener('touchmove', move, {passive:true});
   window.addEventListener('touchend', end);
+
+  // ---------- walkthrough: scroll-through-the-home ----------
+  // Reuses the studio's own project photography (defined above as `projects`) so the
+  // room sequence is real Sri Sankalp work, not stand-in stock. REPLACE with a dedicated
+  // room-by-room shoot of one project once the client supplies it, for a true single-home tour.
+  (function(){
+    var walkPin = document.getElementById('walkPin');
+    if(!walkPin) return;
+    var walkStage = document.getElementById('walkStage');
+    var walkIndexEl = document.getElementById('walkIndex');
+    var walkRoomEl = document.getElementById('walkRoom');
+    var walkBar = document.getElementById('walkProgressBar');
+
+    var rooms = [
+      { p: projects[0], label:'The Foyer' },
+      { p: projects[1], label:'The Living Room' },
+      { p: projects[3], label:'The Kitchen' },
+      { p: projects[2], label:'The Bedroom' },
+      { p: projects[6], label:'The Study' }
+    ].filter(function(r){ return r.p; });
+    if(!rooms.length) return;
+
+    walkPin.style.setProperty('--walk-rooms', rooms.length);
+
+    rooms.forEach(function(r){
+      var f = document.createElement('div');
+      f.className = 'walk-room-frame';
+      f.innerHTML = '<img src="'+ r.p.img +'" alt="'+ r.label +', from a Sri Sankalp Interio project" />';
+      walkStage.appendChild(f);
+    });
+    var frames = walkStage.querySelectorAll('.walk-room-frame');
+    var lastIdx = -1;
+    var ticking = false;
+
+    function updateWalk(){
+      ticking = false;
+      var rect = walkPin.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var total = rect.height - vh;
+      if(total <= 0) return;
+      var progress = Math.min(1, Math.max(0, -rect.top / total));
+      var scaled = reducedMotion ? Math.round(progress * (rooms.length - 1)) : progress * (rooms.length - 1);
+
+      frames.forEach(function(f, i){
+        var dist = scaled - i;
+        var op = Math.max(0, 1 - Math.abs(dist));
+        var forward = Math.min(Math.max(dist, 0), 1);
+        f.style.opacity = op;
+        f.style.transform = reducedMotion ? 'none' : 'scale(' + (1.04 + forward * 0.26).toFixed(3) + ') translateY(' + (-forward * 4).toFixed(2) + '%)';
+        f.style.zIndex = op > 0.5 ? 3 : 1;
+      });
+
+      var idx = Math.min(rooms.length - 1, Math.round(scaled));
+      if(idx !== lastIdx){
+        lastIdx = idx;
+        walkIndexEl.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(rooms.length).padStart(2, '0');
+        walkRoomEl.textContent = rooms[idx].label;
+      }
+      walkBar.style.width = (progress * 100) + '%';
+      walkPin.classList.toggle('is-done', progress > 0.02);
+    }
+    window.addEventListener('scroll', function(){
+      if(!ticking){ requestAnimationFrame(updateWalk); ticking = true; }
+    }, { passive:true });
+    window.addEventListener('resize', updateWalk);
+    updateWalk();
+  })();
 
 })();
 </script>
